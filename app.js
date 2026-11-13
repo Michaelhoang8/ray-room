@@ -56,10 +56,12 @@ function render() {
     invalidate(error.message);
     return;
   }
+  $('settings-panel').close();
   invalidate('Rendering…');
   const current = revision;
   canvas.width = config.width;
   canvas.height = config.height;
+  canvas.style.setProperty('--image-ratio', config.width / config.height);
   context.fillStyle = '#202521';
   context.fillRect(0, 0, canvas.width, canvas.height);
   $('progress').value = 0;
@@ -162,3 +164,9 @@ $('import').onchange = async (event) => {
 };
 labels();
 render();
+
+for (const name of ['settings', 'metrics']) {
+  $(name + '-open').addEventListener('click', () => $(name + '-panel').showModal());
+  $(name + '-close').addEventListener('click', () => $(name + '-panel').close());
+}
+$('render-again').addEventListener('click', render);

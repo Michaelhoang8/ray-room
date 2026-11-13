@@ -3,188 +3,190 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>Ray Room — a light study</title>
+    <title>Ray Room</title>
     <link rel="stylesheet" href="style.css" />
     <script type="module" src="app.js"></script>
   </head>
   <body>
     <header>
-      <a href="/">RAY ROOM <span> / 09</span></a
-      ><span>A small study in light & geometry</span>
+      <h1>Ray Room</h1>
+      <nav>
+        <button id="metrics-open">Statistics</button
+        ><button id="settings-open">Scene settings</button
+        ><button id="png" disabled>Save PNG</button>
+      </nav>
     </header>
     <main>
-      <section class="intro">
-        <p class="eyebrow">COMPUTER GRAPHICS / CPU RAY TRACING</p>
-        <h1>Light, by calculation.</h1>
-        <p>Shape a scene. Follow the rays. Find the image.</p>
+      <section class="stage" aria-label="Rendered scene">
+        <div class="stage-head">
+          <span id="caption">Still life / three spheres</span><span id="dimensions">480 × 300</span>
+        </div>
+        <div class="canvas-wrap">
+          <canvas
+            id="canvas"
+            width="480"
+            height="300"
+            aria-label="Progressively rendered scene"
+          ></canvas>
+        </div>
+        <progress id="progress" value="0" max="300" aria-label="Rendering progress"></progress>
+        <div class="stage-foot">
+          <p id="status" role="status">Ready to render.</p>
+          <div class="viewer-actions">
+            <button id="cancel" type="button" disabled>Cancel</button
+            ><button id="render-again">Render</button>
+          </div>
+        </div>
       </section>
-      <div class="studio">
-        <section class="stage" aria-label="Rendered scene">
-          <div class="stage-head">
-            <span id="caption">Still life / three spheres</span
-            ><span id="dimensions">480 × 300</span>
-          </div>
-          <div class="canvas-wrap">
-            <canvas
-              id="canvas"
-              width="480"
-              height="300"
-              aria-label="Progressively rendered scene"
-            ></canvas>
-          </div>
-          <progress id="progress" value="0" max="300" aria-label="Rendering progress"></progress>
-          <div class="stage-foot">
-            <p id="status" role="status">Ready to render.</p>
-            <button id="png" disabled>Save PNG ↗</button>
-          </div>
-          <dl id="stats"></dl>
-        </section>
-        <aside>
-          <form id="controls">
-            <label
-              >Composition<select name="scene">
-                <option value="still-life">01 — Still life</option>
-                <option value="sphere-field">02 — Sphere field</option>
-              </select></label
-            >
-            <div class="pair">
-              <label
-                >Width<input
-                  name="width"
-                  type="number"
-                  min="16"
-                  max="640"
-                  value="480"
-                  required /></label
-              ><label
-                >Height<input name="height" type="number" min="16" max="480" value="300" required
-              /></label>
-            </div>
-            <div class="pair">
-              <label
-                >Samples / pixel<select name="samples">
-                  <option>1</option>
-                  <option selected>4</option>
-                  <option>16</option>
-                </select></label
-              ><label
-                >Reflection depth<select name="bounces">
-                  <option>0</option>
-                  <option>1</option>
-                  <option selected>2</option>
-                  <option>3</option>
-                </select></label
-              >
-            </div>
-            <details open>
-              <summary>Camera</summary>
-              <label for="azimuth"
-                >Orbit <output for="azimuth">25°</output
-                ><input
-                  id="azimuth"
-                  name="azimuth"
-                  type="range"
-                  min="-180"
-                  max="180"
-                  value="25" /></label
-              ><label for="elevation"
-                >Elevation <output for="elevation">18°</output
-                ><input
-                  id="elevation"
-                  name="elevation"
-                  type="range"
-                  min="5"
-                  max="70"
-                  value="18" /></label
-              ><label for="distance"
-                >Distance <output for="distance">7.5</output
-                ><input
-                  id="distance"
-                  name="distance"
-                  type="range"
-                  min="4"
-                  max="16"
-                  step="0.1"
-                  value="7.5"
-              /></label>
-            </details>
-            <details>
-              <summary>Light & surface</summary>
-              <label for="lightX"
-                >Light horizontal <output for="lightX">-3</output
-                ><input
-                  id="lightX"
-                  name="lightX"
-                  type="range"
-                  min="-8"
-                  max="8"
-                  step="0.1"
-                  value="-3" /></label
-              ><label for="lightHeight"
-                >Light height <output for="lightHeight">6</output
-                ><input
-                  id="lightHeight"
-                  name="lightHeight"
-                  type="range"
-                  min="1"
-                  max="12"
-                  step="0.1"
-                  value="6" /></label
-              ><label for="lightPower"
-                >Light power <output for="lightPower">5</output
-                ><input
-                  id="lightPower"
-                  name="lightPower"
-                  type="range"
-                  min="0.1"
-                  max="10"
-                  step="0.1"
-                  value="5" /></label
-              ><label for="reflectivity"
-                >Reflectivity <output for="reflectivity">0.45</output
-                ><input
-                  id="reflectivity"
-                  name="reflectivity"
-                  type="range"
-                  min="0"
-                  max="0.9"
-                  step="0.01"
-                  value="0.45"
-              /></label>
-            </details>
-            <details>
-              <summary>Inside the renderer</summary>
-              <label
-                >Display<select name="mode">
-                  <option value="beauty">Shaded image</option>
-                  <option value="normals">Surface normals</option>
-                </select></label
-              ><label class="check"
-                ><input name="acceleration" type="checkbox" checked /> Accelerate with BVH</label
-              >
-              <p class="hint">
-                Disable to compare intersection counts. The resulting pixels are identical.
-              </p>
-            </details>
-            <div class="actions">
-              <button class="primary" type="submit">Render scene</button
-              ><button id="cancel" type="button" disabled>Cancel</button>
-            </div>
-          </form>
-          <div class="files">
-            <button id="save">Export scene</button
-            ><label class="file"
-              >Import scene<input id="import" type="file" accept="application/json,.json" /></label
-            ><button id="report" disabled>Render report</button>
-          </div>
-        </aside>
-      </div>
-      <footer>
-        <p>Deterministic sampling · hard shadows · recursive reflections</p>
-        <p>
-          A learning renderer, with every intersection accounted for. No GPU or external assets.
-        </p>
-      </footer>
     </main>
+    <dialog id="settings-panel">
+      <div class="dialog-heading">
+        <h2>Scene settings</h2>
+        <button id="settings-close" aria-label="Close scene settings">×</button>
+      </div>
+      <form id="controls">
+        <label
+          >Scene<select name="scene">
+            <option value="still-life">Still life</option>
+            <option value="sphere-field">Sphere field</option>
+          </select></label
+        >
+        <div class="pair">
+          <label
+            >Width<input
+              name="width"
+              type="number"
+              min="16"
+              max="640"
+              value="480"
+              required /></label
+          ><label
+            >Height<input name="height" type="number" min="16" max="480" value="300" required
+          /></label>
+        </div>
+        <div class="pair">
+          <label
+            >Samples / pixel<select name="samples">
+              <option>1</option>
+              <option selected>4</option>
+              <option>16</option>
+            </select></label
+          ><label
+            >Reflection depth<select name="bounces">
+              <option>0</option>
+              <option>1</option>
+              <option selected>2</option>
+              <option>3</option>
+            </select></label
+          >
+        </div>
+        <details open class="camera">
+          <summary>Camera</summary>
+          <label for="azimuth"
+            >Orbit <output for="azimuth">25°</output
+            ><input
+              id="azimuth"
+              name="azimuth"
+              type="range"
+              min="-180"
+              max="180"
+              value="25" /></label
+          ><label for="elevation"
+            >Elevation <output for="elevation">18°</output
+            ><input
+              id="elevation"
+              name="elevation"
+              type="range"
+              min="5"
+              max="70"
+              value="18" /></label
+          ><label for="distance"
+            >Distance <output for="distance">7.5</output
+            ><input
+              id="distance"
+              name="distance"
+              type="range"
+              min="4"
+              max="16"
+              step="0.1"
+              value="7.5"
+          /></label>
+        </details>
+        <details>
+          <summary>Light & surface</summary>
+          <label for="lightX"
+            >Light horizontal <output for="lightX">-3</output
+            ><input
+              id="lightX"
+              name="lightX"
+              type="range"
+              min="-8"
+              max="8"
+              step="0.1"
+              value="-3" /></label
+          ><label for="lightHeight"
+            >Light height <output for="lightHeight">6</output
+            ><input
+              id="lightHeight"
+              name="lightHeight"
+              type="range"
+              min="1"
+              max="12"
+              step="0.1"
+              value="6" /></label
+          ><label for="lightPower"
+            >Light power <output for="lightPower">5</output
+            ><input
+              id="lightPower"
+              name="lightPower"
+              type="range"
+              min="0.1"
+              max="10"
+              step="0.1"
+              value="5" /></label
+          ><label for="reflectivity"
+            >Reflectivity <output for="reflectivity">0.45</output
+            ><input
+              id="reflectivity"
+              name="reflectivity"
+              type="range"
+              min="0"
+              max="0.9"
+              step="0.01"
+              value="0.45"
+          /></label>
+        </details>
+        <details>
+          <summary>Renderer</summary>
+          <label
+            >Display<select name="mode">
+              <option value="beauty">Shaded image</option>
+              <option value="normals">Surface normals</option>
+            </select></label
+          ><label class="check"
+            ><input name="acceleration" type="checkbox" checked /> Accelerate with BVH</label
+          >
+          <p class="hint">
+            Disable to compare intersection counts. The resulting pixels are identical.
+          </p>
+        </details>
+        <div class="actions">
+          <button class="primary" type="submit">Render scene</button>
+        </div>
+      </form>
+      <div class="files">
+        <button id="save">Export scene</button
+        ><label class="file"
+          >Import scene<input id="import" type="file" accept="application/json,.json" /></label
+        ><button id="report" disabled>Render report</button>
+      </div>
+    </dialog>
+    <dialog id="metrics-panel">
+      <div class="dialog-heading">
+        <h2>Render statistics</h2>
+        <button id="metrics-close" aria-label="Close statistics">×</button>
+      </div>
+      <dl id="stats"></dl>
+    </dialog>
   </body>
 </html>

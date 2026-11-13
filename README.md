@@ -14,6 +14,10 @@ python run.py
 
 Open http://127.0.0.1:8000/. Use `--port 8828` for another port. Rendering stays in the browser; the server exposes only five static assets on loopback. No installation, account, GPU, or external assets required.
 
+## Interface
+
+The rendered image occupies the main viewer with a compact toolbar and progress indicator. Scene settings open in a bottom dialog and close when rendering starts. Statistics open separately. Portrait and landscape images preserve their aspect ratio as the viewport changes; exports retain the selected pixel resolution. Cancel remains beside the viewer during rendering.
+
 ## Explore
 
 - Orbit the camera, move the point light, and tune reflection strength and depth.
