@@ -6,7 +6,8 @@ const $ = (id) => document.getElementById(id),
 let worker = null,
   revision = 0,
   completed = null,
-  importRevision = 0;
+  importRevision = 0,
+  inspectPoint = { x: 0, y: 0 };
 function read() {
   const result = {};
   for (const element of form.elements)
@@ -31,6 +32,9 @@ function invalidate(message) {
   worker?.terminate();
   worker = null;
   completed = null;
+  $('inspect').disabled = true;
+  $('inspect').setAttribute('aria-pressed', 'false');
+  $('pixel-inspector').hidden = true;
   $('cancel').disabled = true;
   $('png').disabled = true;
   $('report').disabled = true;
@@ -87,6 +91,9 @@ function render() {
         worker = null;
         $('cancel').disabled = true;
         $('png').disabled = false;
+        $('inspect').disabled = false;
+        if (!matchMedia('(prefers-reduced-motion: reduce)').matches)
+          canvas.animate([{ opacity: 0.75 }, { opacity: 1 }], { duration: 300 });
         $('report').disabled = false;
         $('status').textContent =
           `Complete · ${(data.stats.milliseconds / 1000).toFixed(2)} s · ${config.acceleration ? 'BVH' : 'brute force'}`;
@@ -170,3 +177,61 @@ for (const name of ['settings', 'metrics']) {
   $(name + '-close').addEventListener('click', () => $(name + '-panel').close());
 }
 $('render-again').addEventListener('click', render);
+
+function inspectPixel() {
+  if (!completed || $('inspect').getAttribute('aria-pressed') !== 'true') return;
+  const { x, y } = inspectPoint,
+    zoom = $('pixel-zoom').getContext('2d');
+  zoom.fillStyle = '#252a24';
+  zoom.fillRect(0, 0, 90, 90);
+  zoom.imageSmoothingEnabled = false;
+  zoom.drawImage(canvas, x - 4, y - 4, 9, 9, 0, 0, 90, 90);
+  zoom.strokeStyle = '#fff';
+  zoom.lineWidth = 1;
+  zoom.strokeRect(40.5, 40.5, 9, 9);
+  const rgb = context.getImageData(x, y, 1, 1).data;
+  $('pixel-readout').textContent = `${x}, ${y}\nRGB ${rgb[0]} / ${rgb[1]} / ${rgb[2]}`;
+}
+$('inspect').onclick = () => {
+  if (!completed) return;
+  const enabled = $('inspect').getAttribute('aria-pressed') !== 'true';
+  $('inspect').setAttribute('aria-pressed', String(enabled));
+  $('pixel-inspector').hidden = !enabled;
+  canvas.classList.toggle('inspecting', enabled);
+  if (enabled) {
+    inspectPoint = { x: Math.floor(canvas.width / 2), y: Math.floor(canvas.height / 2) };
+    inspectPixel();
+    canvas.focus({ preventScroll: true });
+  }
+};
+canvas.addEventListener('pointermove', (event) => {
+  if (!completed || $('inspect').getAttribute('aria-pressed') !== 'true') return;
+  const rect = canvas.getBoundingClientRect();
+  inspectPoint = {
+    x: Math.max(
+      0,
+      Math.min(
+        canvas.width - 1,
+        Math.floor(((event.clientX - rect.left) / rect.width) * canvas.width),
+      ),
+    ),
+    y: Math.max(
+      0,
+      Math.min(
+        canvas.height - 1,
+        Math.floor(((event.clientY - rect.top) / rect.height) * canvas.height),
+      ),
+    ),
+  };
+  inspectPixel();
+});
+canvas.addEventListener('keydown', (event) => {
+  if (!completed || $('inspect').getAttribute('aria-pressed') !== 'true') return;
+  const moves = { ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, -1], ArrowDown: [0, 1] };
+  if (!moves[event.key]) return;
+  event.preventDefault();
+  const [dx, dy] = moves[event.key];
+  inspectPoint.x = Math.max(0, Math.min(canvas.width - 1, inspectPoint.x + dx));
+  inspectPoint.y = Math.max(0, Math.min(canvas.height - 1, inspectPoint.y + dy));
+  inspectPixel();
+});

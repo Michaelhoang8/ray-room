@@ -422,3 +422,71 @@ dd {
 .viewer-actions #cancel:disabled {
   display: none;
 }
+.image-tools {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+.image-tools button {
+  padding: 5px 10px;
+  font-size: 10px;
+}
+#inspect[aria-pressed='true'] {
+  background: #383d30;
+  color: #fff;
+}
+.canvas-wrap {
+  position: relative;
+  background: radial-gradient(ellipse at 50% 40%, #e0dfd8, #c9cbc0);
+}
+#canvas:focus-visible {
+  outline: 2px solid #6d7955;
+  outline-offset: 5px;
+}
+#canvas.inspecting {
+  cursor: crosshair;
+}
+#pixel-inspector {
+  position: absolute;
+  right: 14px;
+  bottom: 14px;
+  padding: 10px;
+  background: #f7f7f0ed;
+  box-shadow: 0 8px 30px #2225;
+  border: 1px solid #c2c6b8;
+  border-radius: 5px;
+  pointer-events: none;
+}
+#pixel-zoom {
+  width: 90px;
+  height: 90px;
+  max-width: none;
+  box-shadow: none;
+  image-rendering: pixelated;
+}
+#pixel-readout {
+  display: block;
+  white-space: pre;
+  font:
+    9px/1.6 ui-monospace,
+    monospace;
+  margin-top: 8px;
+  color: #424a36;
+}
+@media (max-width: 600px) {
+  .stage-head {
+    gap: 8px;
+  }
+  .image-tools {
+    gap: 8px;
+  }
+  #pixel-inspector {
+    right: 4px;
+    bottom: 4px;
+    padding: 6px;
+  }
+  #pixel-zoom {
+    width: 72px;
+    height: 72px;
+  }
+}

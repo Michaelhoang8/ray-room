@@ -19,15 +19,29 @@
     <main>
       <section class="stage" aria-label="Rendered scene">
         <div class="stage-head">
-          <span id="caption">Still life / three spheres</span><span id="dimensions">480 × 300</span>
+          <span id="caption">Still life / three spheres</span>
+          <div class="image-tools">
+            <button id="inspect" aria-pressed="false" disabled>Inspect pixels</button
+            ><span id="dimensions">480 × 300</span>
+          </div>
         </div>
         <div class="canvas-wrap">
           <canvas
             id="canvas"
+            tabindex="0"
             width="480"
             height="300"
             aria-label="Progressively rendered scene"
           ></canvas>
+          <div id="pixel-inspector" hidden>
+            <canvas
+              id="pixel-zoom"
+              width="90"
+              height="90"
+              aria-label="Magnified nine-by-nine pixel neighborhood"
+            ></canvas
+            ><output id="pixel-readout"></output>
+          </div>
         </div>
         <progress id="progress" value="0" max="300" aria-label="Rendering progress"></progress>
         <div class="stage-foot">

@@ -18,6 +18,8 @@ Open http://127.0.0.1:8000/. Use `--port 8828` for another port. Rendering stays
 
 The rendered image occupies the main viewer with a compact toolbar and progress indicator. Scene settings open in a bottom dialog and close when rendering starts. Statistics open separately. Portrait and landscape images preserve their aspect ratio as the viewport changes; exports retain the selected pixel resolution. Cancel remains beside the viewer during rendering.
 
+**Inspect pixels** opens a nine-by-nine pixel loupe with zero-based image coordinates and final 8-bit RGB values. Move over the image or focus it and use arrow keys. Inspection is available only for a completed render and is cleared when settings change or rendering is cancelled. The magnifier stays outside the exported image.
+
 ## Explore
 
 - Orbit the camera, move the point light, and tune reflection strength and depth.
